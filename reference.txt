@@ -1,0 +1,20 @@
+project_folder/
+│
+├── app/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── models.py
+|   ├── utils.py
+│   ├── routes/
+│   │   ├── book_routes.py
+│   │   ├── user_routes.py
+|   ├── services/
+│   │   ├── auth_services.py
+│   └── static/
+│       └── swagger.json
+├── migrations/  # Created after running `flask db init`
+│   ├── versions/
+│   └── env.py
+├── .env
+├── requirements.txt
+└── run.py

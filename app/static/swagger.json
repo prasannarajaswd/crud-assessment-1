@@ -1,0 +1,443 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Prasanna Assessment JKTECH",
+    "description": "API documentation for User and Book management",
+    "version": "1.0.0"
+  },
+  "basePath": "/api",
+  "schemes": ["http"],
+  "paths": {
+    "/register": {
+      "post": {
+        "summary": "User Registration",
+        "description": "Register a new user",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "User information",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": { "type": "string" },
+                "password": { "type": "string" }
+              },
+              "required": ["email", "password"]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          },
+          "400": {
+            "description": "Missing fields"
+          },
+          "409": {
+            "description": "Username or email already exists"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "User Login",
+        "description": "Login a user and generate an authentication token",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "User login information",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": { "type": "string" },
+                "password": { "type": "string" }
+              },
+              "required": ["email", "password"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": { "type": "string" }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing fields"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "summary": "User Profile",
+        "description": "Get the profile of the authenticated user",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "integer" },
+                "username": { "type": "string" },
+                "email": { "type": "string" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/books": {
+      "post": {
+        "summary": "Add a new book",
+        "description": "Add a new book to the collection",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "book",
+            "description": "Book information",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "author": { "type": "string" },
+                "genre": { "type": "string" },
+                "year_published": { "type": "integer" }
+              },
+              "required": ["title", "author", "genre", "year_published"]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Book added successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve all books",
+        "description": "Get a list of all books in the collection",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of books",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "integer" },
+                  "title": { "type": "string" },
+                  "author": { "type": "string" },
+                  "genre": { "type": "string" },
+                  "year_published": { "type": "integer" },
+                  "summary": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/books/{id}": {
+      "get": {
+        "summary": "Retrieve a book by ID",
+        "description": "Get a specific book by its ID",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Book ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book details",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "integer" },
+                "title": { "type": "string" },
+                "author": { "type": "string" },
+                "genre": { "type": "string" },
+                "year_published": { "type": "integer" },
+                "summary": { "type": "string" }
+              }
+            }
+          },
+          "404": {
+            "description": "Book not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a book by ID",
+        "description": "Update the details of a specific book",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Book ID"
+          },
+          {
+            "in": "body",
+            "name": "book",
+            "description": "Book details to update",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "author": { "type": "string" },
+                "genre": { "type": "string" },
+                "year_published": { "type": "integer" },
+                "summary": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book updated successfully"
+          },
+          "404": {
+            "description": "Book not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a book by ID",
+        "description": "Delete a specific book",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Book ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book deleted successfully"
+          },
+          "404": {
+            "description": "Book not found"
+          }
+        }
+      }
+    },
+    "/books/{id}/reviews": {
+      "post": {
+        "summary": "Add a review to a book",
+        "description": "Add a review for a specific book",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Book ID"
+          },
+          {
+            "in": "body",
+            "name": "review",
+            "description": "Review details",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user_id": { "type": "integer" },
+                "review_text": { "type": "string" },
+                "rating": { "type": "integer" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Review added successfully"
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve reviews for a book",
+        "description": "Get all reviews for a specific book",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Book ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of reviews",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "integer" },
+                  "user_id": { "type": "integer" },
+                  "review_text": { "type": "string" },
+                  "rating": { "type": "integer" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/books/{id}/summary": {
+      "get": {
+        "summary": "Retrieve book summary and rating",
+        "description": "Get a summary and aggregated rating for a book",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Book ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book summary and rating",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "author": { "type": "string" },
+                "summary": { "type": "string" },
+                "average_rating": { "type": "number" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recommendations": {
+      "get": {
+        "summary": "Get book recommendations",
+        "description": "Get book recommendations based on user preferences",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of recommended books",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "integer" },
+                  "title": { "type": "string" },
+                  "author": { "type": "string" },
+                  "genre": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Enter your token with 'Bearer ' prefix"
+    }
+  }
+}
