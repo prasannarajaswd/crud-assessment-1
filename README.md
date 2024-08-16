@@ -1,4 +1,5 @@
 ## Prasanna Assessment Backend Folder Strucutre
+```
 project_folder/
 │
 ├── app/
@@ -22,6 +23,7 @@ project_folder/
 └── tests/
     ├── test_book_routes.py
     └── test_user_routes.py
+```
 
 # Dependencies
 1. Python 3.9.x
