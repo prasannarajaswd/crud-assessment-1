@@ -10,15 +10,26 @@ book_bp = Blueprint('book_bp', __name__)
 @token_required
 def add_book(current_user):
     data = request.get_json()
+
+    # Ensure required fields are present
+    if not all(key in data for key in ('title', 'author', 'genre', 'year_published')):
+        return jsonify({'message': 'Missing required fields'}), 400
+
     new_book = Book(
         title=data['title'],
         author=data['author'],
         genre=data['genre'],
         year_published=data['year_published']
     )
+    
     db.session.add(new_book)
     db.session.commit()
-    return jsonify({'message': 'Book added successfully'}), 201
+    
+    return jsonify({
+        'message': 'Book added successfully', 
+        'title': new_book.title, 
+        'id': new_book.id
+    }), 201
 
 # 2. Retrieve all books (GET /books)
 @book_bp.route('/books', methods=['GET'])
@@ -57,6 +68,7 @@ def update_book(current_user, id):
     book = Book.query.get_or_404(id)
     data = request.get_json()
 
+    # Update fields if present
     book.title = data.get('title', book.title)
     book.author = data.get('author', book.author)
     book.genre = data.get('genre', book.genre)
@@ -64,7 +76,11 @@ def update_book(current_user, id):
     book.summary = data.get('summary', book.summary)
 
     db.session.commit()
-    return jsonify({'message': 'Book updated successfully'}), 200
+    return jsonify({
+        'message': 'Book added successfully', 
+        'title': book.title, 
+        'id': book.id
+    }), 200
 
 # 5. Delete a book by its ID (DELETE /books/<id>)
 @book_bp.route('/books/<int:id>', methods=['DELETE'])
@@ -82,6 +98,10 @@ def add_review(current_user, id):
     book = Book.query.get_or_404(id)
     data = request.get_json()
 
+    # Ensure required fields are present
+    if not all(key in data for key in ('user_id', 'review_text', 'rating')):
+        return jsonify({'message': 'Missing required fields'}), 400
+
     new_review = Review(
         book_id=book.id,
         user_id=data['user_id'],  # Assuming user ID comes from the client
@@ -93,7 +113,7 @@ def add_review(current_user, id):
     db.session.commit()
     return jsonify({'message': 'Review added successfully'}), 201
 
-# 7. Retrieve all reviews for a book (GET /books/<id>/reviews)
+# 7. Retrieve all reviews for a book (GET /books/<int:id>/reviews)
 @book_bp.route('/books/<int:id>/reviews', methods=['GET'])
 @token_required
 def get_reviews(current_user, id):
@@ -109,7 +129,7 @@ def get_reviews(current_user, id):
 
     return jsonify(review_list), 200
 
-# 8. Get a summary and aggregated rating for a book (GET /books/<id>/summary)
+# 8. Get a summary and aggregated rating for a book (GET /books/<int:id>/summary)
 @book_bp.route('/books/<int:id>/summary', methods=['GET'])
 @token_required
 def get_book_summary(current_user, id):
