@@ -7,15 +7,17 @@ services:
     ports:
       - "5001:5000"
     environment:
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1
-      - SECRET_KEY=your_secret_key
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres  # Change 'localhost' to 'db'
+      - FLASK_ENV=${FLASK_ENV}
+      - FLASK_DEBUG=${FLASK_DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - db
     volumes:
       - .:/app
-    command: flask run --host=0.0.0.0
+    command: >
+      sh -c "flask db upgrade &&
+             gunicorn --bind 0.0.0.0:5000 run:app"
 
   db:
     image: postgres:15-alpine
@@ -25,7 +27,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     ports:
-      - "5432:5432"  # Map container port 5432 to host port 5432
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
