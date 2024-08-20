@@ -104,7 +104,7 @@ def add_review(current_user, id):
 
     new_review = Review(
         book_id=book.id,
-        user_id=data['user_id'],  # Assuming user ID comes from the client
+        user_id=data['user_id'],
         review_text=data['review_text'],
         rating=data['rating']
     )
