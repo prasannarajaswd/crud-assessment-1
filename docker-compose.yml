@@ -3,33 +3,45 @@ version: '3.8'
 services:
   web:
     build: .
-    container_name: pcr_prasanna_assessment_jktech
     ports:
-      - "5001:5000"
+      - "5000:5000"
     environment:
-      - FLASK_ENV=${FLASK_ENV}
-      - FLASK_DEBUG=${FLASK_DEBUG}
-      - SECRET_KEY=${SECRET_KEY}
-      - DATABASE_URL=${DATABASE_URL}
-    depends_on:
-      - db
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - DATABASE_URL=sqlite:///app.db
+      - SECRET_KEY=dev_secret_key_change_in_production
     volumes:
       - .:/app
-    command: >
-      sh -c "flask db upgrade &&
-             gunicorn --bind 0.0.0.0:5000 run:app"
+      - ./data:/app/data  # Persist SQLite database
+    restart: unless-stopped
 
-  db:
-    image: postgres:15-alpine
-    container_name: pcr_postgres_db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+  # Optional: Add PostgreSQL for production-like setup
+  # Uncomment below to use PostgreSQL instead of SQLite
+  # db:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_DB: bookdb
+  #     POSTGRES_USER: bookuser
+  #     POSTGRES_PASSWORD: bookpass
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
 
-volumes:
-  postgres_data:
+  # web-with-postgres:
+  #   build: .
+  #   ports:
+  #     - "5000:5000"
+  #   environment:
+  #     - FLASK_ENV=development
+  #     - FLASK_DEBUG=1
+  #     - DATABASE_URL=postgresql://bookuser:bookpass@db:5432/bookdb
+  #     - SECRET_KEY=dev_secret_key_change_in_production
+  #   depends_on:
+  #     - db
+  #   volumes:
+  #     - .:/app
+  #   restart: unless-stopped
+
+# volumes:
+#   postgres_data:
